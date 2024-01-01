@@ -5,20 +5,64 @@ import {
   VStack,
   InputGroup,
   InputRightElement,
-  Button } from '@chakra-ui/react'
+  Button,
+  useToast
+} from '@chakra-ui/react'
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { handelLoginApis } from '~/apis'
+import { localService } from '~/config/localService'
 const Login = () => {
+  const toast = useToast()
+  const [loading, setLoading] =useState(false)
   const [show, setShow] = useState(false)
-  const [email,setEmail] = useState()
-  const [passWord,setPassWord] = useState()
+  const [email, setEmail] = useState()
+  const [password, setPassWord] = useState()
   const handleClick = () => setShow(!show)
-
-  const handelSubmit = () => { }
+  const navigate = useNavigate()
+  const handelSubmit = () => {
+    setLoading(true)
+    if (!email || !password) {
+      toast({
+        title: 'Please Fill All The Feilds!',
+        status: 'warning',
+        duration: 8000,
+        isClosable: true,
+        position:'bottom-left'
+      })
+      setLoading(false)
+      return
+    }
+    try {
+      handelLoginApis({ email, password }).then((res) => {
+        toast({
+          title: 'Login Sucessful!',
+          status: 'success',
+          duration: 8000,
+          isClosable: true,
+          position:'bottom-left'
+        })
+        setLoading(false)
+        navigate('/chats')
+        localService.setItem(res.data)
+      })
+    } catch (error) {
+      toast({
+        title: 'Error Occured',
+        status: error.response.data.message,
+        duration: 8000,
+        isClosable: true,
+        position:'bottom-left'
+      })
+      setLoading(false)
+    }
+  }
   return (
     <VStack spacing='5px' color='black'>
       <FormControl id='email' isRequired>
         <FormLabel>Email</FormLabel>
         <Input
+          value={email}
           placeholder='Enter your email'
           onChange={(e) => { setEmail(e.target.value) }}
         />
@@ -27,6 +71,7 @@ const Login = () => {
         <FormLabel>Password</FormLabel>
         <InputGroup size='md'>
           <Input
+            value={password}
             pr='4.5rem'
             type={show ? 'text' : 'password'}
             placeholder='Enter password'
@@ -44,6 +89,7 @@ const Login = () => {
         colorScheme='blue'
         width='100%'
         onClick={handelSubmit}
+        isLoading= {loading}
       >
         Login
       </Button>
