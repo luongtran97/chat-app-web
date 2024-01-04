@@ -7,10 +7,21 @@ import {
   Tab,
   TabPanels,
   TabPanel } from '@chakra-ui/react'
+import { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import Login from '~/components/Authentication/Login'
 import SignUp from '~/components/Authentication/SignUp'
+import { localService } from '~/config/localService'
 
 const HomePage = () => {
+  const navigate = useNavigate()
+  useEffect(() => {
+    const userInfo = localService.getItem('USER_INFO')
+
+    if (userInfo) {
+      navigate('/')
+    }
+  }, [navigate])
   return (
     <Container maxW='xl' centerContent>
       <Box
