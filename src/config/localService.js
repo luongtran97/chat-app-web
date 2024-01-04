@@ -1,7 +1,7 @@
 export const localService = {
   setItem : (value, key) => {
     let dataJson = JSON.stringify(value)
-    localStorage.setItem(dataJson, key)
+    localStorage.setItem(key, dataJson)
   },
   getItem: (key) => {
     let dataJson = localStorage.getItem(key)

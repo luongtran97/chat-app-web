@@ -20,6 +20,7 @@ const Login = () => {
   const [password, setPassWord] = useState()
   const handleClick = () => setShow(!show)
   const navigate = useNavigate()
+
   const handelSubmit = () => {
     setLoading(true)
     if (!email || !password) {
@@ -44,7 +45,7 @@ const Login = () => {
         })
         setLoading(false)
         navigate('/chats')
-        localService.setItem(res.data)
+        localService.setItem(res.data, 'USER_INFO')
       })
     } catch (error) {
       toast({
