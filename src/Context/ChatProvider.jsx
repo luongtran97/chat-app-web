@@ -5,11 +5,13 @@ import { localService } from '~/config/localService'
 export const chatContext = createContext({})
 export const ChatProvider = ({ children }) => {
   const [user, setUser] = useState({})
+  const [selectedChat, setSelectedChat] = useState()
+  const [chat, setChat] = useState([])
   useEffect(() => {
     setUser (localService.getItem('USER_INFO'))
   }, [])
   return (
-    <chatContext.Provider value={{ user, setUser } }>
+    <chatContext.Provider value={{ user, setUser, selectedChat, setSelectedChat, chat, setChat } }>
       {children}
     </chatContext.Provider>
   )

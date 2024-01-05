@@ -1,3 +1,4 @@
+import { ViewIcon } from '@chakra-ui/icons'
 import {
   Modal,
   ModalBody,
@@ -6,28 +7,56 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  useDisclosure
+  useDisclosure,
+  Button,
+  IconButton,
+  Image,
+  Text
 } from '@chakra-ui/react'
-import { Button } from 'antd'
 
-const ProfileModal = () => {
+const ProfileModal = ({ user, children }) => {
+
 
   const { isOpen, onOpen, onClose } = useDisclosure()
   return (
     <>
+      {children ? ( <span onClick={onOpen}> {children} </span> ) :( <IconButton display={{ base:'flex' }} icon={<ViewIcon/>} onClick={onOpen} />) }
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Modal Title</ModalHeader>
+        <ModalContent height='410px'>
+          <ModalHeader
+            display='flex'
+            justifyContent='center'
+            fontSize='40px'
+            fontFamily='Work sans'
+          >
+            {user?.name}
+          </ModalHeader>
           <ModalCloseButton />
-          <ModalBody>
+          <ModalBody
+            display='flex'
+            justifyContent='center'
+            alignItems='center'
+            flexDirection='column'
+          >
+            <Image
+              borderRadius='full'
+              boxSize='150px'
+              src={user?.picture}
+              alt={user?.name}
+            />
+            <Text
+              fontSize={{ base:'28px', md:'30px' }}
+              fontFamily='Work sans'
+            >
+              {user?.email}
+            </Text>
           </ModalBody>
 
           <ModalFooter>
             <Button colorScheme='blue' mr={3} onClick={onClose}>
-              Close
+                Close
             </Button>
-            <Button variant='ghost'>Secondary Action</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
