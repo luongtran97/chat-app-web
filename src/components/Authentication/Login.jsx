@@ -8,8 +8,9 @@ import {
   Button,
   useToast
 } from '@chakra-ui/react'
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { chatContext } from '~/Context/ChatProvider'
 import { handelLoginApis } from '~/apis'
 import { localService } from '~/config/localService'
 const Login = () => {
@@ -20,14 +21,14 @@ const Login = () => {
   const [password, setPassWord] = useState()
   const handleClick = () => setShow(!show)
   const navigate = useNavigate()
-
+  const { setUser } = useContext(chatContext)
   const handelSubmit = () => {
     setLoading(true)
     if (!email || !password) {
       toast({
         title: 'Please Fill All The Feilds!',
         status: 'warning',
-        duration: 8000,
+        duration: 5000,
         isClosable: true,
         position:'bottom-left'
       })
@@ -39,19 +40,20 @@ const Login = () => {
         toast({
           title: 'Login Sucessful!',
           status: 'success',
-          duration: 8000,
+          duration: 5000,
           isClosable: true,
           position:'bottom-left'
         })
         setLoading(false)
         navigate('/chats')
         localService.setItem(res.data, 'USER_INFO')
+        setUser(localService.getItem('USER_INFO'))
       })
     } catch (error) {
       toast({
         title: 'Error Occured',
         status: error.response.data.message,
-        duration: 8000,
+        duration: 5000,
         isClosable: true,
         position:'bottom-left'
       })
