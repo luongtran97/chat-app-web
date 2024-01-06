@@ -19,7 +19,7 @@ const HomePage = () => {
     const userInfo = localService.getItem('USER_INFO')
 
     if (userInfo) {
-      navigate('/')
+      navigate('/chats')
     }
   }, [navigate])
   return (

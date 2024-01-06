@@ -32,3 +32,7 @@ export const fetchChatsApis = async(user) => {
   const response = await axios.get(`${apiRoot}/api/chat`, { headers:{ Authorization: user.token } })
   return response
 }
+export const createGroupChatApis = async(data, user) => {
+  const response = await axios.post(`${apiRoot}/api/chat/group`, data, { headers:{ Authorization: user.token } })
+  return response
+}

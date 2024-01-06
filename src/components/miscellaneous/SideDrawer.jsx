@@ -8,7 +8,6 @@ import {
   DrawerBody,
   DrawerCloseButton,
   DrawerContent,
-  DrawerFooter,
   DrawerHeader,
   DrawerOverlay,
   Input,
@@ -38,7 +37,7 @@ const SideDrawer = () => {
   const [searchResult, setSearchResult] =useState([])
   const [loading, setLoading] = useState(false)
   const [loadingChat, setLoadingChat] = useState(false)
-  const { user, selectedChat, setSelectedChat, chat, setChat } = useContext(chatContext)
+  const { user, setSelectedChat, chat, setChat } = useContext(chatContext)
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   const handelLogout = () => {
