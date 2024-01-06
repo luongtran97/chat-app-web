@@ -6,32 +6,32 @@ import { fetchChatsApis } from '~/apis'
 import { localService } from '~/config/localService'
 import ChatLoading from './ChatLoading'
 import { getSender } from '~/config/Chatlogic'
+import GroupChatModal from './GroupChatModal'
 
-const MyChats = () => {
+const MyChats = ({ user } ) => {
   const [loggedUser, setLoggedUser] = useState()
-  const { user, setLoadingChat, selectedChat, setSelectedChat, chat, setChat } = useContext(chatContext)
+  const { selectedChat, setSelectedChat, chat, setChat } = useContext(chatContext)
+  console.log('🚀 ~ chat:', chat)
   const toast = useToast()
   useEffect(() => {
-    setLoggedUser(localService.getItem('USER_INFO'))
-    FetchChats()
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const FetchChats = async() => {
-    try {
-      const { data } = await fetchChatsApis(user)
-      setChat(data)
-    } catch (error) {
-      toast({
-        title: 'Error fetching chat!',
-        status: 'warning',
-        duration: 1000,
-        isClosable: true,
-        position:'bottom-left'
-      })
+    const fetchChat = async () => {
+      try {
+        const { data } = await fetchChatsApis(user)
+        setChat(data)
+      } catch (error) {
+        toast({
+          title: 'Error fetching chat!',
+          status: 'warning',
+          duration: 1000,
+          isClosable: true,
+          position: 'bottom-left'
+        })
+      }
     }
-  }
+    setLoggedUser(localService.getItem('USER_INFO'))
+    fetchChat()
+  }, [])
+
 
   return (
     <Box
@@ -55,11 +55,13 @@ const MyChats = () => {
         alignItems='center'
       >
         My Chats
-        <Button
-          fontSize={{ base:'17px', md:'10px', lg:'17px' }}
-          rightIcon={<AddIcon/>}
-        > Create new group chat
-        </Button>
+        <GroupChatModal>
+          <Button
+            fontSize={{ base:'17px', md:'10px', lg:'17px' }}
+            rightIcon={<AddIcon/>}
+          > Create new group chat
+          </Button>
+        </GroupChatModal>
       </Box>
 
       <Box
@@ -85,8 +87,8 @@ const MyChats = () => {
                 borderRadius='lg'
                 key={chat?._id}
               >
-                <Text>
-                  {!chat.isGroupChat ? getSender(loggedUser, chat.users) : (chat.chatName) }
+                <Text key={chat._id}>
+                  {chat.chatName}
                 </Text>
               </Box>
             })}
