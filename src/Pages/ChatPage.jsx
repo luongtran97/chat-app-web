@@ -1,7 +1,6 @@
 import { Box } from '@chakra-ui/react'
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { chatContext } from '~/Context/ChatProvider'
 import ChatBox from '~/components/miscellaneous/ChatBox'
 import MyChats from '~/components/miscellaneous/MyChats'
 import SideDrawer from '~/components/miscellaneous/SideDrawer'

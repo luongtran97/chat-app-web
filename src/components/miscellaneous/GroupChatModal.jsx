@@ -23,7 +23,6 @@ const GroupChatModal = ({ children }) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [groupChat, setGroupChat] = useState()
   const [selectedUsers, setSelectedUsers] = useState([])
-  console.log('🚀 ~ selectedUsers:', selectedUsers)
   const [search, setSearch] = useState('')
   const [searchResult, setSearchResult] = useState([])
   const [loading, setLoading] = useState(false)
@@ -50,7 +49,6 @@ const GroupChatModal = ({ children }) => {
   }
   const handelSumbit = async() => {
     if (!groupChat || !selectedUsers) {
-
       toast({
         title: 'Please fill all the feilds!',
         status: 'warning',
@@ -68,6 +66,13 @@ const GroupChatModal = ({ children }) => {
       const { data } = await createGroupChatApis(dataToAdd, user)
       setChat([data, ...chat])
       onClose()
+      toast({
+        title: 'New Group Chat Created',
+        status: 'success',
+        duration: 2000,
+        isClosable: true,
+        position:'bottom-left'
+      })
     } catch (error) {
       toast({
         title: 'Fail to create new group chat',
