@@ -15,7 +15,7 @@ import { handelLoginApis } from '~/apis'
 import { localService } from '~/config/localService'
 const Login = () => {
   const toast = useToast()
-  const [loading, setLoading] =useState(false)
+  const [loadingLogin, setLoadingLogin] =useState(false)
   const [show, setShow] = useState(false)
   const [email, setEmail] = useState()
   const [password, setPassWord] = useState()
@@ -23,7 +23,6 @@ const Login = () => {
   const navigate = useNavigate()
   const { setUser } = useContext(chatContext)
   const handelSubmit = () => {
-    setLoading(true)
     if (!email || !password) {
       toast({
         title: 'Please Fill All The Feilds!',
@@ -32,7 +31,6 @@ const Login = () => {
         isClosable: true,
         position:'bottom-left'
       })
-      setLoading(false)
       return
     }
     try {
@@ -44,7 +42,6 @@ const Login = () => {
           isClosable: true,
           position:'bottom-left'
         })
-        setLoading(false)
         navigate('/chats')
         localService.setItem(res.data, 'USER_INFO')
         setUser(localService.getItem('USER_INFO'))
@@ -57,7 +54,6 @@ const Login = () => {
         isClosable: true,
         position:'bottom-left'
       })
-      setLoading(false)
     }
   }
   return (
@@ -92,7 +88,7 @@ const Login = () => {
         colorScheme='blue'
         width='100%'
         onClick={handelSubmit}
-        isLoading= {loading}
+        isLoading={loadingLogin}
       >
         Login
       </Button>

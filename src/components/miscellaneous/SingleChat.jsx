@@ -4,8 +4,9 @@ import { useContext } from 'react'
 import { chatContext } from '~/Context/ChatProvider'
 import { getSender, getSenderFull } from '~/config/Chatlogic'
 import ProfileModal from './ProfileModal'
+import UpdateGroupChatModal from './UpdateGroupChatModal'
 
-const SingleChat = ({ fetchAgain, setFetchAgain}) => {
+const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   const { selectedChat, setSelectedChat, user } = useContext(chatContext)
 
   return (
@@ -32,8 +33,23 @@ const SingleChat = ({ fetchAgain, setFetchAgain}) => {
               ?(<>{getSender(user, selectedChat.users)}
                 <ProfileModal user={getSenderFull(user, selectedChat.users)}/>
               </>)
-              : (<>{selectedChat.chatName.toUpperCase()}</>) }
+              : (<>
+                {selectedChat?.chatName.toUpperCase()}
+                <UpdateGroupChatModal fetchAgain={fetchAgain} setFetchAgain={setFetchAgain}/>
+              </>) }
           </Text>
+          <Box
+            display='flex'
+            overflowY='hidden'
+            justifyContent='flex-end'
+            p={3}
+            background='#E8E8E8'
+            w='100%'
+            h='100%'
+            borderRadius='lg'
+          >
+
+          </Box>
         </>
         : <Box
           display='flex'

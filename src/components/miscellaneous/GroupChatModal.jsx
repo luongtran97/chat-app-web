@@ -73,6 +73,7 @@ const GroupChatModal = ({ children }) => {
         isClosable: true,
         position:'bottom-left'
       })
+      setSelectedUsers([])
     } catch (error) {
       toast({
         title: 'Fail to create new group chat',
