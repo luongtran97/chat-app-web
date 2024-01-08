@@ -36,3 +36,15 @@ export const createGroupChatApis = async(data, user) => {
   const response = await axios.post(`${apiRoot}/api/chat/group`, data, { headers:{ Authorization: user.token } })
   return response
 }
+export const renameGroupChatApis = async(data, user) => {
+  const response = await axios.put(`${apiRoot}/api/chat/rename`, data, { headers:{ Authorization: user.token } })
+  return response
+}
+export const addUserToGroupChatApis = async(data, user) => {
+  const response = await axios.put(`${apiRoot}/api/chat/groupadd`, data, { headers:{ Authorization: user.token } })
+  return response
+}
+export const removeUserToGroupChatApis = async(data, user) => {
+  const response = await axios.put(`${apiRoot}/api/chat/groupremove`, data, { headers:{ Authorization: user.token } })
+  return response
+}

@@ -26,7 +26,6 @@ const SignUp = () => {
   const handleClick = () => setShow(!show)
   const handleClick1 = () => setShow1(!show1)
   const postDetail = (pic) => {
-    setLoading(true)
     if (pic === undefined) {
       toast({
         title: 'Please Select An Image!',
@@ -49,8 +48,8 @@ const SignUp = () => {
         method:'post',
         body: data
       }).then(res => res.json())
-        .then(data => {setPic(data.url.toString()); setLoading(false)})
-        .catch(() => { setLoading(false)})
+        .then(data => {setPic(data.url.toString())})
+        .catch(() => { })
     } else {
       toast({
         title: 'Please Select An Image!',
@@ -59,10 +58,10 @@ const SignUp = () => {
         isClosable: true,
         position:'bottom-left'
       })
+      
     }
   }
   const handelSubmit = async() => {
-    setLoading(true)
     if (!name || !email || !password || !confirmPassWord) {
       toast({
         title: 'Please Fill All The Feilds!',
@@ -71,7 +70,6 @@ const SignUp = () => {
         isClosable: true,
         position:'bottom-left'
       })
-      setLoading(false)
       return
     }
     // check password
@@ -102,19 +100,17 @@ const SignUp = () => {
           position:'bottom-left'
         })
         localService.setItem(data, 'userInfo')
-        setLoading(false)
         navigate('/chats')
       })
 
     } catch (error) {
       toast({
-        title: 'Error Occured',
+        title: error.response?.data.message || null,
         status: 'error',
         duration: 8000,
         isClosable: true,
         position:'bottom-left'
       })
-      setLoading(false)
     }
   }
   return (

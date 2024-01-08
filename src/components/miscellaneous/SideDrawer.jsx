@@ -82,7 +82,6 @@ const SideDrawer = () => {
     } catch (error) {
       toast({
         title: 'Error fetching chat!',
-        // description
         status: 'warning',
         duration: 1000,
         isClosable: true,
