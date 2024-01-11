@@ -12,8 +12,10 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { handelSignUpApis } from '~/apis'
 import { localService } from '~/config/localService'
+import { regex } from '~/utils/constant'
 const SignUp = () => {
-  const [loading, setLoading] =useState(false)
+  const [loadingSignUp, setLoadingSignUp] =useState(false)
+  console.log('🚀 ~ loading:', loadingSignUp)
   const [show, setShow] = useState(false)
   const [show1, setShow1] = useState(false)
   const [name, setName] = useState()
@@ -58,13 +60,26 @@ const SignUp = () => {
         isClosable: true,
         position:'bottom-left'
       })
-      
     }
   }
-  const handelSubmit = async() => {
+  const handelSubmitSignUp = async() => {
+      setLoadingSignUp(true)
+
+    //check isEmpty
     if (!name || !email || !password || !confirmPassWord) {
       toast({
         title: 'Please Fill All The Feilds!',
+        status: 'warning',
+        duration: 8000,
+        isClosable: true,
+        position:'bottom-left'
+      })
+      return
+    }
+    // check is email
+    if (!regex.email.test(email) ) {
+      toast({
+        title: 'Invalid Email!',
         status: 'warning',
         duration: 8000,
         isClosable: true,
@@ -85,34 +100,36 @@ const SignUp = () => {
     }
 
     try {
-      const data = {
+      const dataToAdd = {
         name,
         email,
         password,
         picture:pic
       }
-      handelSignUpApis(data).then(() => {
-        toast({
-          title: 'Registration Sucessful!',
-          status: 'success',
-          duration: 8000,
-          isClosable: true,
-          position:'bottom-left'
-        })
-        localService.setItem(data, 'userInfo')
-        navigate('/chats')
+      const { data } = await handelSignUpApis(dataToAdd)
+      toast({
+        title: 'Registration Sucessful!',
+        status: 'success',
+        duration: 8000,
+        isClosable: true,
+        position:'bottom-left'
       })
-
+      localService.setItem(data, 'userInfo')
+      navigate('/chats')
+      setLoadingSignUp(false)
     } catch (error) {
       toast({
-        title: error.response?.data.message || null,
+        title: 'Error Occured',
         status: 'error',
         duration: 8000,
         isClosable: true,
         position:'bottom-left'
       })
+      setLoadingSignUp(false)
     }
   }
+
+
   return (
     <VStack spacing='5px' color='black'>
       <FormControl id='first-name' isRequired>
@@ -122,9 +139,10 @@ const SignUp = () => {
           onChange={(e) => { setName(e.target.value) }}
         />
       </FormControl>
-      <FormControl id='email' isRequired>
+      <FormControl id='email' isRequired >
         <FormLabel>Email</FormLabel>
         <Input
+          type='email'
           placeholder='Enter your email'
           onChange={(e) => { setEmail(e.target.value) }}
         />
@@ -172,11 +190,11 @@ const SignUp = () => {
       </FormControl>
 
       <Button
-        isLoading={loading}
+        isLoading={loadingSignUp}
         marginTop={15}
         colorScheme='blue'
         width='100%'
-        onClick={handelSubmit}
+        onClick={handelSubmitSignUp}
       >
         SignUp
       </Button>

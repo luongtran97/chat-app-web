@@ -22,7 +22,8 @@ const Login = () => {
   const handleClick = () => setShow(!show)
   const navigate = useNavigate()
   const { setUser } = useContext(chatContext)
-  const handelSubmit = () => {
+  const handelSubmit = async() => {
+    setLoadingLogin(true)
     if (!email || !password) {
       toast({
         title: 'Please Fill All The Feilds!',
@@ -34,22 +35,24 @@ const Login = () => {
       return
     }
     try {
-      handelLoginApis({ email, password }).then((res) => {
-        toast({
-          title: 'Login Sucessful!',
-          status: 'success',
-          duration: 5000,
-          isClosable: true,
-          position:'bottom-left'
-        })
-        navigate('/chats')
-        localService.setItem(res.data, 'USER_INFO')
-        setUser(localService.getItem('USER_INFO'))
+      const { data } = await handelLoginApis({ email, password })
+      toast({
+        title: 'Login Sucessful!',
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+        position:'bottom-left'
       })
+      setLoadingLogin(false)
+      navigate('/chats')
+      localService.setItem(data, 'USER_INFO')
+      setUser(localService.getItem('USER_INFO'))
     } catch (error) {
+      setLoadingLogin(false)
       toast({
         title: 'Error Occured',
-        status: error.response.data.message,
+        description: error?.response?.data.message,
+        status: 'warning',
         duration: 5000,
         isClosable: true,
         position:'bottom-left'
