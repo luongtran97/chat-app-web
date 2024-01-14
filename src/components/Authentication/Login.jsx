@@ -46,7 +46,7 @@ const Login = () => {
       setLoadingLogin(false)
       navigate('/chats')
       localService.setItem(data, 'USER_INFO')
-      setUser(localService.getItem('USER_INFO'))
+      setUser(data)
     } catch (error) {
       setLoadingLogin(false)
       toast({
