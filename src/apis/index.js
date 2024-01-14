@@ -48,3 +48,11 @@ export const removeUserToGroupChatApis = async(data, user) => {
   const response = await axios.put(`${apiRoot}/api/chat/groupremove`, data, { headers:{ Authorization: user.token } })
   return response
 }
+export const sendMessageApis = async(data, user) => {
+  const response = await axios.post(`${apiRoot}/api/message`, data, { headers:{ 'Content-type': 'application/json', Authorization: user.token } })
+  return response
+}
+export const fetchMessageApis = async(chatId, user) => {
+  const response = await axios.get(`${apiRoot}/api/message/${chatId}`, { headers:{ Authorization: user.token } })
+  return response
+}

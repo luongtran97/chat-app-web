@@ -22,10 +22,9 @@ import UserBadgeItem from '../UserAvatar/UserBadgeItem'
 import { addUserToGroupChatApis, handelSearchApis, removeUserToGroupChatApis, renameGroupChatApis } from '~/apis'
 import UsersList from '../UserAvatar/UsersList'
 
-const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain }) => {
+const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const { user, selectedChat, setSelectedChat } = useContext(chatContext)
-  console.log('🚀 ~ selectedChat:', selectedChat)
   const [groupChatName, setGroupChatName] = useState()
   const [search, setSearch] = useState('')
   const [searchResult, setSearchResult] = useState()
@@ -46,7 +45,6 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain }) => {
     try {
       setLoading(true)
       const { data } = await removeUserToGroupChatApis({ chatId: selectedChat._id, userId: user1._id }, user)
-      console.log('🚀 ~ data:', data)
       user1._id === user._id ? setSelectedChat() : setSelectedChat(data)
       setFetchAgain(!fetchAgain)
       setLoading(false)
@@ -106,9 +104,7 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain }) => {
     }
   }
   const handelAddUser = async(user1) => {
-    console.log('🚀 ~ user1:', user1)
     if (selectedChat.users.find(u => u._id === user1._id)) {
-      console.log('check user ton tai')
       toast({
         title: 'User Already In Group!',
         status: 'warning',
@@ -119,7 +115,6 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain }) => {
       return
     }
     if ( selectedChat.groupAdmin._id !== user._id) {
-      console.log('check user admin')
       toast({
         title: 'Only Admin Can Add SomeOne To Group!',
         status: 'warning',
@@ -135,6 +130,7 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain }) => {
       const { data } = await addUserToGroupChatApis({ chatId: selectedChat._id, userId:user1._id }, user)
       setSelectedChat(data)
       setFetchAgain(!fetchAgain)
+      fetchMessages()
       setLoading(false)
     } catch (error) {
       toast({
