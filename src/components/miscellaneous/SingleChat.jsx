@@ -8,18 +8,52 @@ import UpdateGroupChatModal from './UpdateGroupChatModal'
 import { fetchMessageApis, sendMessageApis } from '~/apis'
 import '~/components/Style.css'
 import ScrollableChat from '../ScrollableChat'
+import io from 'socket.io-client'
+import { ENDPOINT } from '~/utils/constant'
+import Lottie from 'lottie-react'
+import animation from '../../animation/typingAnimation.json'
+var socket, selectedChatCompare
 const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   const toast = useToast()
+  const [socketConnected, setSocketConnected] = useState(false)
   const { selectedChat, setSelectedChat, user } = useContext(chatContext)
   const [messages, setMessages] = useState([])
   const [loading, setLoading] = useState(false)
   const [newMessage, setNewMessage] = useState()
+  const [typing, setTyping] = useState(false)
+  const [isTyping, setIsTyping] = useState(false)
+  useEffect(() => {
+    fetchMessages()
+    selectedChatCompare = selectedChat
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedChat])
+  // xử lý socket.io
+  useEffect(() => {
+    socket = io(ENDPOINT)
+    socket.emit('setup', user)
+    socket.on('connected', () => setSocketConnected(true) )
+    socket.on('typing', () => setIsTyping(true ))
+    socket.on('stop typing', () => setIsTyping(false ))
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  useEffect(() => {
+    socket.on('message recieved', (newMessageRecieved) => {
+      if (!selectedChatCompare || selectedChatCompare._id !== newMessageRecieved.chat._id) {
+        // give notification
+      } else {
+        setMessages([...messages, newMessageRecieved])
+      }
+    })
+  })
   const handelSendMessage = async(e) => {
     // xử lý on key down khi người dùng bấm enter
     if (e.key === 'Enter' && newMessage)
       try {
+        socket.emit('stop typing', selectedChat._id)
         setNewMessage('')
         const { data } = await sendMessageApis( { content: newMessage, chatId: selectedChat._id }, user)
+        socket.emit('new message', data)
         setMessages([...messages, data])
       } catch (error) {
         toast({
@@ -34,7 +68,23 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   }
   const typingHandeler = (e) => {
     setNewMessage(e.target.value)
-    //Typing Indicator Logic
+    //   xử lý quá trình typing
+    if (!socketConnected) return
+    if (!typing) {
+      setTyping(true)
+      socket.emit('typing', selectedChat._id)
+    }
+
+    let lastTypingTime = new Date().getTime()
+    var timerLength = 800
+    setTimeout(() => {
+      var timeNow = new Date().getTime()
+      var timeDiff = timeNow - lastTypingTime
+      if (timeDiff >= timerLength && typing) {
+        socket.emit('stop typing', selectedChat._id)
+        setTyping(false)
+      }
+    }, timerLength)
   }
   const fetchMessages = async() => {
     if (!selectedChat) return
@@ -43,6 +93,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
       const { data } = await fetchMessageApis(selectedChat._id, user)
       setMessages(data)
       setLoading(false)
+      socket.emit('join chat', selectedChat._id)
     } catch (error) {
       toast({
         title: 'Error Occured!',
@@ -54,10 +105,14 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
       setLoading(false)
     }
   }
-  useEffect(() => {
-    fetchMessages()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedChat])
+  // const defaulOption ={
+  //   lopp:true,
+  //   autoplay:true,
+  //   animatitonData:animation,
+  //   redererSettings: {
+  //     preserveAspectRatio:'xMidYMid slice'
+  //   }
+  // }
   return (
     <>
       {selectedChat
@@ -112,6 +167,10 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
               </div>
             ) }
             <FormControl onKeyDown={handelSendMessage} isRequired mt={3}>
+              {isTyping ?
+                <div>
+                  <Lottie animationData={animation} style={{ width:'50px', height:'50px' }} loop={true} />
+                </div> : <></> }
               <Input
                 variant='filled'
                 placeholder='Enter a message'

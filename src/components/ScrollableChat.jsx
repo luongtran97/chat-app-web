@@ -8,14 +8,14 @@ const ScrollableChat = ({ messages }) => {
   const { user } = useContext(chatContext)
   return (
     <ScrollableFeed>
-      {messages && messages.map((mes, index) => { console.log(mes.sender)
+      {messages && messages.map((mes, index) => {
         return <div style={{ display:'flex' }} key={index}>
           {
             (isSameSender(messages, mes, index, user._id)
             || isLastMessage(messages, index, user._id)
             ) && (
               <Tooltip
-                label={mes.sender.name}
+                label={mes.sender[0].name}
                 placement='bottom-start'
                 hasArrow
               >
