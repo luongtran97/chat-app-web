@@ -73,21 +73,21 @@ const MyChats = ({ user, fetchAgain } ) => {
         borderRadius='lg'
         overflowY='hidden'
       >
-        {chat ? (
+        { loggedUser && chat ? (
           <Stack overflowY='scroll'>
-            {chat?.map((chat) => {
+            {chat?.map((c) => {
               return <Box
-                onClick={() => { setSelectedChat(chat)}}
+                onClick={() => { setSelectedChat(c)}}
                 cursor='pointer'
-                bg={selectedChat === chat ? '#38B2AC' : '#E8E8E8'}
-                color={selectedChat === chat ? 'white' : 'black'}
+                bg={selectedChat === c ? '#38B2AC' : '#E8E8E8'}
+                color={selectedChat === c ? 'white' : 'black'}
                 px={3}
                 py={2}
                 borderRadius='lg'
-                key={chat?._id}
+                key={c?._id}
               >
                 <Text>
-                  {!chat.isGroupChat ? getSender(loggedUser, chat.users) : chat.chatName}
+                  {!c.isGroupChat ? getSender(loggedUser, c.users) : c.chatName}
                 </Text>
               </Box>
             })}

@@ -16,7 +16,7 @@ var socket, selectedChatCompare
 const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   const toast = useToast()
   const [socketConnected, setSocketConnected] = useState(false)
-  const { selectedChat, setSelectedChat, user } = useContext(chatContext)
+  const { selectedChat, setSelectedChat, user, notification, setNotification } = useContext(chatContext)
   const [messages, setMessages] = useState([])
   const [loading, setLoading] = useState(false)
   const [newMessage, setNewMessage] = useState()
@@ -40,7 +40,11 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   useEffect(() => {
     socket.on('message recieved', (newMessageRecieved) => {
       if (!selectedChatCompare || selectedChatCompare._id !== newMessageRecieved.chat._id) {
-        // give notification
+        // hiện thông báo
+        if (!notification.includes(newMessageRecieved)) {
+          setNotification([newMessageRecieved, ...notification])
+          setFetchAgain(!fetchAgain)
+        }
       } else {
         setMessages([...messages, newMessageRecieved])
       }
@@ -105,14 +109,6 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
       setLoading(false)
     }
   }
-  // const defaulOption ={
-  //   lopp:true,
-  //   autoplay:true,
-  //   animatitonData:animation,
-  //   redererSettings: {
-  //     preserveAspectRatio:'xMidYMid slice'
-  //   }
-  // }
   return (
     <>
       {selectedChat
@@ -192,7 +188,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
             pb={3}
             fontFamily='Works sans'
           >
-            Click on a user to start chatting
+            Click on a user to start chating
           </Text>
         </Box> }
     </>

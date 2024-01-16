@@ -29,6 +29,8 @@ import ProfileModal from './ProfileModal'
 import ChatLoading from './ChatLoading'
 import { accessChatApis, handelSearchApis } from '~/apis'
 import UsersList from '~/components/UserAvatar/UsersList'
+import { getSender } from '~/config/Chatlogic'
+import NotificationBadge, { Effect } from 'react-notification-badge'
 
 const SideDrawer = () => {
   const toast = useToast()
@@ -37,7 +39,8 @@ const SideDrawer = () => {
   const [searchResult, setSearchResult] =useState([])
   const [loading, setLoading] = useState(false)
   const [loadingChat, setLoadingChat] = useState(false)
-  const { user, setSelectedChat, chat, setChat } = useContext(chatContext)
+  const { user, setSelectedChat, chat, setChat, notification, setNotification } = useContext(chatContext)
+  console.log('🚀 ~ notification:', notification)
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   const handelLogout = () => {
@@ -120,14 +123,24 @@ const SideDrawer = () => {
         <div>
           <Menu>
             <MenuButton p={1}>
+              <NotificationBadge count={notification.length} effect={Effect.SCALE}/>
               <BellIcon fontSize='2xl' m={1}/>
             </MenuButton>
-            <MenuList>
-              <MenuItem>Download</MenuItem>
-              <MenuItem>Create a Copy</MenuItem>
-              <MenuItem>Mark as Draft</MenuItem>
-              <MenuItem>Delete</MenuItem>
-              <MenuItem>Attend a Workshop</MenuItem>
+            <MenuList textAlign='center'>
+              {!notification.length && 'No New Messages'}
+              {notification.map((notif) => (
+                <MenuItem
+                  key={notif._id}
+                  onClick={() => {
+                    setSelectedChat(notif.chat)
+                    setNotification(notification.filter((n) => n !== notif))
+                  }}
+                >
+                  {notif.chat.isGroupChat
+                    ? `New Message in ${notif.chat.chatName}`
+                    : `New Message from ${getSender(user, notif.chat.users)}`}
+                </MenuItem>
+              ))}
             </MenuList>
           </Menu>
           <Menu>
@@ -149,7 +162,6 @@ const SideDrawer = () => {
         <DrawerContent>
           <DrawerCloseButton />
           <DrawerHeader borderBottom='1px'>Search User</DrawerHeader>
-
           <DrawerBody>
             <Box display='flex' pb={2}>
               <Input
